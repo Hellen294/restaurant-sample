@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Fried Rice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #ffcc00;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .booking-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .booking-form h2 {
+            margin-top: 0;
+            color: #ff5733;
+        }
+        .booking-form label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+        .booking-form input[type="text"],
+        .booking-form input[type="email"],
+        .booking-form select,
+        .booking-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .booking-form input[type="submit"] {
+            background-color: #ff5733;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .booking-form input[type="submit"]:hover {
+            background-color: #e14e2b;
+        }
+        .total-amount {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+    </style>
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function(){
+            emailjs.init("HvxbZfh4f8c1r_U2Z"); // Replace with your actual Public Key
+        })();
+
+        const prices = {
+            'chicken': 10.99,
+            'shrimp': 12.99,
+            'vegetable': 9.99,
+            'afang': 13.99,
+            'edikang': 15.99,
+            'fufu': 15.99,
+            'atama': 15.99,
+            'white_soup': 15.99
+        };
+
+        function updateTotalAmount() {
+            const menuItem = document.getElementById('menu-item').value;
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            const totalAmount = (prices[menuItem] * quantity).toFixed(2);
+            document.getElementById('total-amount').textContent = `Total Amount: $${totalAmount}`;
+        }
+
+function sendEmail(e) {
+    e.preventDefault();
+
+    const menuItem = document.getElementById('menu-item').value;
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+    const totalAmount = (prices[menuItem] * quantity).toFixed(2);
+
+    // Populate form data
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        menu_item: menuItem,
+        quantity: quantity,
+        total_amount: totalAmount, // Add total amount to form data
+        comments: document.getElementById('comments').value
+    };
+
+    emailjs.send('service_itejt7e', 'template_q2qepor', formData)
+        .then(function(response) {
+            alert('Booking submitted successfully!');
+        }, function(error) {
+            alert('Failed to send booking: ' + JSON.stringify(error));
+        });
+
+    e.target.reset();
+    document.getElementById('total-amount').textContent = '';
+}
+
+
+        window.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('menu-item').addEventListener('change', updateTotalAmount);
+            document.getElementById('quantity').addEventListener('input', updateTotalAmount);
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Book Your Fried Rice</h1>
+    </div>
+    <div class="container">
+        <div class="booking-form">
+            <h2>Booking Form</h2>
+            <form onsubmit="sendEmail(event)">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" name="phone" required>
+
+                <label for="phone">Address:</label>
+                <input type="text" id="address" name="address" required>
+
+                <label for="menu-item">Select Menu Item:</label>
+                <select id="menu-item" name="menu_item" required>
+                   <option value="chicken">Chicken Fried Rice - $10.99</option>
+                   <option value="shrimp">Shrimp Fried Rice - $12.99</option>
+                   <option value="vegetable">Vegetable Fried Rice - $9.99</option>
+                   <option value="afang">1Kg of Afang Soup - $13.99</option>
+                   <option value="edikang">1Kg of Edikang-ikong Soup - $15.99</option>
+                   <option value="fufu">1Kg of Fufu - $15.99</option>
+                   <option value="atama">1Kg of Atama Soup - $15.99</option>
+                   <option value="white_soup">1Kg of White Soup - $15.99</option>
+                </select>
+
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity" name="quantity" min="1" required>
+
+                <label for="comments">Additional Comments:</label>
+                <textarea id="comments" name="comments" rows="4"></textarea>
+
+                <div id="total-amount" class="total-amount">Total Amount: $0.00</div>
+
+                <input type="submit" value="Submit Booking">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
